@@ -1,4 +1,78 @@
+**HEARTS — Text Stereotype Detection (Dutch adaptation)**
 
+This repository contains work for replicating and extending the EMGSD stereotype-detection experiments into Dutch. The original EMGSD results were replicated, new datasets were merged and translated to Dutch, and experiments were run with a Dutch language model to measure transfer quality and the trade-off between quick scaling (machine translation) and contextual accuracy (target-language augmentation).
+
+**Overview**
+- **Goal:** Replicate the original EMGSD experiments and evaluate Dutch adaptations using both machine-translated and Dutch-augmented datasets.
+- **Key outcomes:** Replication of EMGSD results; new dataset compositions (machine-translated EMGSD subset and augmented Dutch datasets); fine-tuning with a Dutch pre-trained model (RobBERT-v2-Dutch-Base).
+
+**Datasets**
+- **Original:** EMGSD (English) — replicated baseline results.
+- **Machine-translated EMGSD:** Subset of EMGSD translated EN→NL (used to test quick scaling with MT).
+- **GPT-augmented datasets:** Augmented Dutch SeeGULL and augmented Dutch CrowsPairs (used to introduce neutral and unrelated sentences and improve Dutch contextual coverage).
+- **Merged compositions used in experiments:**
+  - Machine Translation of EMGSD (combined with 20% MGSD + Winoqueer & SeeGULL augmentations)
+  - Augmented Dutch SeeGULL + Augmented Dutch CrowsPairs
+
+**Model & Method**
+- **Original setup:** ALBERT-v2 fine-tuned on EMGSD for stereotype classification (English tokenizer/encoder).
+- **This work:** Replace the English-only encoder with `RobBERT-v2-Dutch-Base` to handle Dutch tokenisation and Dutch linguistic phenomena.
+  - **Why RobBERT?** RobBERT is a RoBERTa-based language model specifically pre-trained on large Dutch corpora (OSCAR). It better captures Dutch grammar, idioms and sentence structure than a strictly English model or many multilingual models.
+
+**Preprocessing & Filtering**
+- Counterfactuals and undesired examples were filtered out before training.
+- When using machine translation, a subset selection was applied to avoid class imbalance and overfitting to noisy MT outputs.
+
+**Experiments**
+- Fine-tuning was run replacing ALBERT-v2 with `RobBERT-v2-Dutch-Base` and training on the different dataset compositions described above.
+- Metrics, splits and hyperparameters mirror the original replication where possible; differences are noted in the experimental logs and scripts.
+
+**Results (summary)**
+- Replication: original EMGSD results were reproduced using an equivalent setup.
+- Dutch MT: Machine-translated EMGSD gives a fast way to scale to Dutch but may miss subtle Dutch-specific biases and idioms.
+- Dutch augmentation: Augmented Dutch SeeGULL and CrowsPairs introduce more contextual variety and improved performance on Dutch-specific examples compared to MT-only data.
+
+**How to run**
+- Activate the project virtual environment (example used in development):
+
+```
+source aisdCW2/bin/activate
+```
+
+- Install dependencies (if needed):
+
+```
+pip install -r requirements.txt
+```
+
+Run notebooks:
+1. DutchAdaptation/DutchSeeGULLAUG2.ipynb
+2. DutchAdaptation/mergeDutchSeeGULLCrowSdatasets.ipynb
+3. DutchAdaptation/EvalDutchSeeGULLCrows.ipynb
+
+**Repository structure (high-level)**
+- **Model Training and Evaluation/** — original training and evaluation scripts (e.g., `BERT_Models_Fine_Tuning.py`).
+- **Exploratory Data Analysis/** — EDA scripts used for dataset inspection.
+- **DutchAdaptation/** — translated and merged Dutch dataset and notebook files.
+- **Replication/** — replication scripts and output directories.
+
+**Files of interest**
+- [requirements.txt](requirements.txt) — Python dependencies.
+- [Model Training and Evaluation/BERT_Models_Fine_Tuning.py](Model%20Training%20and%20Evaluation/BERT_Models_Fine_Tuning.py) — main fine-tuning script used for experiments.
+- [DutchAdaptation](DutchAdaptation) — prepared Dutch datasets and notebooks.
+
+**Notes & Next steps**
+- WinoQueer in Dutch dataset presented recently at a conference but not yet published at time of working, this would be great to include in future to replicate EMGSD properly.
+
+**License**
+- See `LICENSE` at the repository root for licensing details.
+
+**References & provenance**
+1. EMGSD — original dataset (replicated here).
+2. SeeGULL / CrowsPairs — used for Dutch augmentations.
+3. RobBERT-v2-Dutch-Base — Dutch pre-trained model used to replace ALBERT-v2.
+
+------------------------------------ Replicated from:
 # HEARTS-Text-Stereotype-Detection
 
 [![Paper](https://img.shields.io/badge/ArXiv-2409.11579-red)](https://arxiv.org/abs/2409.11579)
@@ -9,6 +83,9 @@
 HEARTS introduces explainable, low-carbon models fine-tuned on the **Expanded Multi-Grain Stereotype Dataset (EMGSD)** to tackle challenges in stereotype detection. This repository includes scripts for training, evaluation, and explainability analysis for sentence-level stereotype classification. For details, refer to the [HEARTS research paper](https://arxiv.org/abs/2409.11579).
 
 ---
+
+## References
+The State of Multilingual LLM Safety Research: From Measuring the Language Gap to Mitigating It (Yong, 2025)
 
 ## Features
 
